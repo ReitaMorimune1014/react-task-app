@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { v4 as uuid } from "uuid";
+import axios from "axios";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import TaskFilter from "./components/TaskFilter";
@@ -7,6 +8,18 @@ import TaskFilter from "./components/TaskFilter";
 export default function App() {
     const [tasks, setTasks] = useState([]);
     const [filter, setFilter] = useState("all");
+
+    useEffect(() => {
+        axios.get("https://jsonplaceholder.typicode.com/todos?_limit=5")
+            .then((res) => {
+                const initialTasks = res.data.map((task) => ({
+                    id: uuid(),
+                    title: task.title,
+                    completed: task.completed,
+                }));
+                setTasks(initialTasks);
+            });
+    }, []);
 
     const onAddTask = (title) => {
         setTasks([...tasks, { id: uuid(), title, completed: false }]);
